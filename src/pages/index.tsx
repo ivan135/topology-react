@@ -3,6 +3,8 @@ import styles from './index.less';
 import { Tools } from '@/utils/tools';
 
 import { Topology } from 'topology-core';
+import { Node } from 'topology-core/models/node';
+import { Line } from 'topology-core/models/line';
 import { Options } from 'topology-core/options';
 import { registerNode } from 'topology-core/middles';
 import {
@@ -79,13 +81,20 @@ import {
   sequenceFocusTextRect
 } from 'topology-sequence-diagram';
 
+import CanvasProps from './components/canvasProps';
+
 class Index extends React.Component<{}> {
   canvas: Topology;
   canvasOptions: Options = {};
 
   state = {
     tools: Tools,
-    iconfont: { fontSize: '.24rem' }
+    iconfont: { fontSize: '.24rem' },
+    selected: {
+      node: null,
+      line: null,
+      multi: false,
+    }
   };
 
   componentDidMount() {
@@ -139,20 +148,64 @@ class Index extends React.Component<{}> {
     switch (event) {
       case 'node':
       case 'addNode':
-
+        this.setState({
+          selected: {
+            node: data,
+            line: null,
+            multi: false,
+          }
+        });
         break;
       case 'line':
       case 'addLine':
-
+        this.setState({
+          selected: {
+            node: null,
+            line: data,
+            multi: false,
+          }
+        });
         break;
       case 'multi':
-
+        this.setState({
+          selected: {
+            node: null,
+            line: null,
+            multi: true
+          }
+        });
         break;
       case 'space':
-
+        this.setState({
+          selected: {
+            node: null,
+            line: null,
+            multi: false
+          }
+        });
         break;
       case 'moveOut':
 
+        break;
+      case 'moveNodes':
+      case 'resizeNodes':
+        if (data.length > 1) {
+          this.setState({
+            selected: {
+              node: null,
+              line: null,
+              multi: true,
+            }
+          });
+        } else {
+          this.setState({
+            selected: {
+              node: data[0],
+              line: null,
+              multi: false
+            }
+          });
+        }
         break;
       case 'resize':
 
@@ -170,6 +223,26 @@ class Index extends React.Component<{}> {
 
   onDrag(event: React.DragEvent<HTMLAnchorElement>, node: any) {
     event.dataTransfer.setData('Text', JSON.stringify(node.data));
+  }
+
+  handlePropsChange = (props: any, changedValues: any, allValues: any) => {
+    if (changedValues.node) {
+      // 遍历查找修改的属性，赋值给原始Node
+
+      // this.state.selected.node = Object.assign(this.state.selected.node, changedValues.node);
+      for (const key in changedValues.node) {
+        if (Array.isArray(changedValues.node[key])) {
+        } else if (typeof changedValues.node[key] === 'object') {
+          for (const k in changedValues.node[key]) {
+            this.state.selected.node[key][k] = changedValues.node[key][k];
+          }
+        } else {
+          this.state.selected.node[key] = changedValues.node[key];
+        }
+      }
+      // 通知属性更新，刷新
+      this.canvas.updateProps(this.state.selected.node);
+    }
   }
 
   render() {
@@ -198,7 +271,9 @@ class Index extends React.Component<{}> {
           }
         </div>
         <div id="topology-canvas" className={styles.full} />
-        <div className={styles.props}>{}</div>
+        <div className={styles.props}>
+          <CanvasProps data={this.state.selected} onValuesChange={this.handlePropsChange} />
+        </div>
       </div>
     );
   }
