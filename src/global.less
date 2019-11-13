@@ -1,0 +1,76 @@
+@import '~antd/es/style/themes/default.less';
+
+html {
+  font-size: 100px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+.colorWeak {
+  filter: invert(80%);
+}
+
+.ant-layout {
+  min-height: 100vh;
+}
+
+canvas {
+  display: block;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.ml30 {
+  margin-left: 0.3rem;
+}
+
+.mt5 {
+  margin-top: 0.05rem;
+}
+
+.mt10 {
+  margin-top: 0.1rem;
+}
+
+.gray {
+  color: #ccc;
+}
+
+.title {
+  color: #0d1a26;
+  font-weight: 600;
+}
+
+@media (max-width: @screen-xs) {
+  .ant-table {
+    width: 100%;
+    overflow-x: auto;
+    &-thead > tr,
+    &-tbody > tr {
+      > th,
+      > td {
+        white-space: pre;
+        > span {
+          display: block;
+        }
+      }
+    }
+  }
+}

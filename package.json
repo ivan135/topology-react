@@ -12,7 +12,12 @@
     "dva": "^2.6.0-beta.6",
     "antd": "^3.19.5",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "topology-activity-diagram": "^0.0.4",
+    "topology-class-diagram": "^0.0.1",
+    "topology-core": "^0.0.16",
+    "topology-flow-diagram": "^0.0.1",
+    "topology-sequence-diagram": "^0.0.4"
   },
   "devDependencies": {
     "@types/jest": "^23.3.12",
