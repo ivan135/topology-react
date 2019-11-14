@@ -1,10 +1,13 @@
 import React from 'react';
+import { connect } from 'dva';
+
 import styles from './index.less';
 import { Tools } from '@/utils/tools';
 
+import * as FileSaver from 'file-saver';
+declare var C2S: any;
+
 import { Topology } from 'topology-core';
-import { Node } from 'topology-core/models/node';
-import { Line } from 'topology-core/models/line';
 import { Options } from 'topology-core/options';
 import { registerNode } from 'topology-core/middles';
 import {
@@ -82,12 +85,14 @@ import {
 } from 'topology-sequence-diagram';
 
 import CanvasProps from './components/canvasProps';
+import { IEvent } from '@/models/event';
 
-class Index extends React.Component<{}> {
+class Index extends React.Component<{ event: IEvent }> {
   canvas: Topology;
   canvasOptions: Options = {};
 
   state = {
+    event: this.props.event,
     tools: Tools,
     iconfont: { fontSize: '.24rem' },
     selected: {
@@ -245,6 +250,96 @@ class Index extends React.Component<{}> {
     }
   }
 
+  componentDidUpdate() {
+    if (this.props.event !== this.state.event) {
+      this.setState({ event: this.props.event });
+      if (this['handle_' + this.props.event.event]) {
+        this['handle_' + this.props.event.event](this.props.event.data);
+      }
+    }
+  }
+
+  handle_new(data: any) {
+    this.canvas.open({ nodes: [], lines: [] });
+  }
+
+  handle_open(data: any) {
+    this.handle_replace(data);
+  }
+
+  handle_replace(data: any) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.onchange = event => {
+      const elem: any = event.srcElement || event.target;
+      if (elem.files && elem.files[0]) {
+        const name = elem.files[0].name.replace('.json', '');
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          const text = e.target.result + '';
+          try {
+            const data = JSON.parse(text);
+            if (data && Array.isArray(data.nodes) && Array.isArray(data.lines)) {
+              this.canvas.open(data);
+            }
+          } catch (e) {
+            return false;
+          }
+        };
+        reader.readAsText(elem.files[0]);
+      }
+    };
+    input.click();
+  }
+
+  handle_save(data: any) {
+    FileSaver.saveAs(
+      new Blob([JSON.stringify(this.canvas.data)], { type: 'text/plain;charset=utf-8' }),
+      `le5le.topology.json`
+    );
+  }
+
+  handle_savePng(data: any) {
+    this.canvas.saveAsImage('le5le.topology.png');
+  }
+
+  handle_saveSvg(data: any) {
+    const ctx = new C2S(this.canvas.canvas.width + 200, this.canvas.canvas.height + 200);
+    for (const item of this.canvas.data.nodes) {
+      item.render(ctx);
+    }
+
+    for (const item of this.canvas.data.lines) {
+      item.render(ctx);
+    }
+
+    let mySerializedSVG = ctx.getSerializedSvg();
+    mySerializedSVG = mySerializedSVG.replace(
+      '<defs/>',
+      `<defs>
+    <style type="text/css">
+      @font-face {
+        font-family: 'topology';
+        src: url('http://at.alicdn.com/t/font_1331132_h688rvffmbc.ttf?t=1569311680797') format('truetype');
+      }
+    </style>
+  </defs>`
+    );
+
+    mySerializedSVG = mySerializedSVG.replace(/--le5le--/g, '&#x');
+
+    const urlObject: any = window.URL || window;
+    const export_blob = new Blob([mySerializedSVG]);
+    const url = urlObject.createObjectURL(export_blob);
+
+    const a = document.createElement('a');
+    a.setAttribute('download', 'le5le.topology.svg');
+    a.setAttribute('href', url);
+    const evt = document.createEvent('MouseEvents');
+    evt.initEvent('click', true, true);
+    a.dispatchEvent(evt);
+  }
+
   render() {
     return (
       <div className={styles.page}>
@@ -279,4 +374,4 @@ class Index extends React.Component<{}> {
   }
 }
 
-export default Index;
+export default connect((state: any) => ({ event: state.event }))(Index);

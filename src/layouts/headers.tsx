@@ -11,7 +11,7 @@ import Joinin from './joinin';
 
 const { SubMenu } = Menu;
 
-class Headers extends React.Component<{}> {
+class Headers extends React.Component<{ data: any }> {
   state = { about: false, license: false, joinin: false };
 
   onMenuClick = (event: ClickParam) => {
@@ -42,6 +42,16 @@ class Headers extends React.Component<{}> {
           joinin: true,
         });
         break;
+      default:
+        if (key && this.props.dispatch) {
+          this.props.dispatch({
+            type: 'event/emit',
+            payload: {
+              event: key
+            }
+          });
+        }
+        break;
     }
   };
 
@@ -64,21 +74,21 @@ class Headers extends React.Component<{}> {
             </a>
           </Menu.Item>
           <SubMenu title="文件" className={styles.item}>
-            <Menu.Item className={styles.subTtem}>新建文件</Menu.Item>
-            <Menu.Item className={styles.subTtem}>打开本地文件（新建）</Menu.Item>
-            <Menu.Item className={styles.subTtem}>导入本地文件...</Menu.Item>
+            <Menu.Item key="new" className={styles.subTtem}>新建文件</Menu.Item>
+            <Menu.Item key="open" className={styles.subTtem}>打开本地文件（新建）</Menu.Item>
+            <Menu.Item key="replace" className={styles.subTtem}>导入本地文件...</Menu.Item>
             <Menu.Divider>{}</Menu.Divider>
-            <Menu.Item className={styles.subTtem}>保存到本地</Menu.Item>
-            <Menu.Item className={styles.subTtem}>下载为PNG</Menu.Item>
-            <Menu.Item className={styles.subTtem}>下载为SVG</Menu.Item>
+            <Menu.Item key="save" className={styles.subTtem}>保存到本地</Menu.Item>
+            <Menu.Item key="savePng" className={styles.subTtem}>下载为PNG</Menu.Item>
+            <Menu.Item key="saveSvg" className={styles.subTtem}>下载为SVG</Menu.Item>
           </SubMenu>
           <SubMenu title="编辑" className={styles.item}>
-            <Menu.Item className={styles.subTtem}>撤消</Menu.Item>
-            <Menu.Item className={styles.subTtem}>恢复</Menu.Item>
+            <Menu.Item key="undo" className={styles.subTtem}>撤消</Menu.Item>
+            <Menu.Item key="redo" className={styles.subTtem}>恢复</Menu.Item>
             <Menu.Divider>{}</Menu.Divider>
-            <Menu.Item className={styles.subTtem}>复制</Menu.Item>
-            <Menu.Item className={styles.subTtem}>剪切</Menu.Item>
-            <Menu.Item className={styles.subTtem}>粘贴</Menu.Item>
+            <Menu.Item key="copy" className={styles.subTtem}>复制</Menu.Item>
+            <Menu.Item key="cut" className={styles.subTtem}>剪切</Menu.Item>
+            <Menu.Item key="parse" className={styles.subTtem}>粘贴</Menu.Item>
           </SubMenu>
           <SubMenu title="社区" className={styles.item}>
             <Menu.Item className={styles.subTtem} key="about">
@@ -120,4 +130,4 @@ class Headers extends React.Component<{}> {
     );
   }
 }
-export default connect(() => ({}))(Headers);
+export default connect((state: any) => ({ event: state.event }))(Headers);
