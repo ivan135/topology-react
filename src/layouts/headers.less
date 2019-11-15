@@ -8,6 +8,7 @@
   line-height: @head-height;
   background: #f8f8f8;
   display: flex;
+  flex: 1;
   font-size: 0.13rem;
 
   .logo {
@@ -17,6 +18,20 @@
 
   img {
     height: 0.22rem;
+  }
+
+  .full {
+    flex: 1;
+  }
+
+  .right {
+    border-bottom: none !important;
+    border-left: 1px solid #ddd;
+    padding: 0 !important;
+
+    div {
+      padding: 0 0.2rem !important;
+    }
   }
 }
 

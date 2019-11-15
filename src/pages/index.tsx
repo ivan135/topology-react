@@ -213,12 +213,16 @@ class Index extends React.Component<{ event: IEvent }> {
         }
         break;
       case 'resize':
-
-        break;
       case 'scale':
-
-        break;
       case 'locked':
+        if (this.canvas) {
+          this.props.dispatch({
+            type: 'canvas/update',
+            payload: {
+              data: this.canvas.data
+            }
+          });
+        }
 
         break;
     }
@@ -338,6 +342,56 @@ class Index extends React.Component<{ event: IEvent }> {
     const evt = document.createEvent('MouseEvents');
     evt.initEvent('click', true, true);
     a.dispatchEvent(evt);
+  }
+
+  handle_undo(data: any) {
+    this.canvas.undo();
+  }
+
+  handle_redo(data: any) {
+    this.canvas.redo();
+  }
+
+  handle_copy(data: any) {
+    this.canvas.copy();
+  }
+
+  handle_cut(data: any) {
+    this.canvas.cut();
+  }
+
+  handle_parse(data: any) {
+    this.canvas.parse();
+  }
+
+  handle_curve(data: any) {
+    this.canvas.data.lineName = 'curve';
+    this.props.dispatch({
+      type: 'canvas/update',
+      payload: {
+        data: this.canvas.data
+      }
+    });
+  }
+
+  handle_polyline(data: any) {
+    this.canvas.data.lineName = 'polyline';
+    this.props.dispatch({
+      type: 'canvas/update',
+      payload: {
+        data: this.canvas.data
+      }
+    });
+  }
+
+  handle_line(data: any) {
+    this.canvas.data.lineName = 'line';
+    this.props.dispatch({
+      type: 'canvas/update',
+      payload: {
+        data: this.canvas.data
+      }
+    });
   }
 
   render() {

@@ -11,8 +11,17 @@ import Joinin from './joinin';
 
 const { SubMenu } = Menu;
 
-class Headers extends React.Component<{ data: any }> {
-  state = { about: false, license: false, joinin: false };
+class Headers extends React.Component<{ canvasData: any }> {
+  state = {
+    about: false,
+    license: false,
+    joinin: false,
+    lineNames: {
+      curve: '曲线',
+      polyline: '折线',
+      line: '直线'
+    }
+  };
 
   onMenuClick = (event: ClickParam) => {
     const { key } = event;
@@ -60,6 +69,8 @@ class Headers extends React.Component<{ data: any }> {
   }
 
   render(): React.ReactNode {
+    const { data } = this.props.canvasData;
+    const scale = Math.floor(data.scale);
     return (
       <div>
         <Menu
@@ -116,7 +127,17 @@ class Headers extends React.Component<{ data: any }> {
             <Menu.Divider />
             <Menu.Item className={styles.subTtem} key="about">关于</Menu.Item>
           </SubMenu>
+          <div className={styles.full} />
+          <Menu.Item className={styles.right}>
+            <div>视图：{scale}%</div>
+          </Menu.Item>
+          <SubMenu title={`默认连线类型：${this.state.lineNames[data.lineName]}`} className={styles.right}>
+            <Menu.Item className={styles.subTtem} key="curve">曲线</Menu.Item>
+            <Menu.Item className={styles.subTtem} key="polyline">折线</Menu.Item>
+            <Menu.Item className={styles.subTtem} key="line">直线</Menu.Item>
+          </SubMenu>
         </Menu>
+
         {this.state.about ? (
           <About show={this.state.about} onChange={this.handleModalChange} />
         ) : null}
@@ -130,4 +151,4 @@ class Headers extends React.Component<{ data: any }> {
     );
   }
 }
-export default connect((state: any) => ({ event: state.event }))(Headers);
+export default connect((state: any) => ({ canvasData: state.canvas }))(Headers);
