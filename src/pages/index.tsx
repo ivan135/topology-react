@@ -89,7 +89,9 @@ import { IEvent } from '@/models/event';
 
 class Index extends React.Component<{ event: IEvent }> {
   canvas: Topology;
-  canvasOptions: Options = {};
+  canvasOptions: Options = {
+    rotateCursor: '/img/rotate.cur'
+  };
 
   state = {
     event: this.props.event,
@@ -223,7 +225,6 @@ class Index extends React.Component<{ event: IEvent }> {
             }
           });
         }
-
         break;
     }
     // tslint:disable-next-line:no-console
