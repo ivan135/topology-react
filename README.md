@@ -38,6 +38,10 @@ $ npm run build
 - 加入[微信群2](http://topology.le5le.com/assets/img/topology_wechat2.jpg)
 - 联系管理员（微信：alsmile123），加入大群
 
+# 开源不易
+
+个人开源，默默奉献。欢迎多参与、推广、写自己的学习博客（带上开源项目地址:) ）、并在[官网源码](https://github.com/le5le-com/topology)、[创建者主页](https://juejin.im/user/58b1336c570c3500696559f8)等点赞支持。
+
 # License
 
 MIT © le5le.com
